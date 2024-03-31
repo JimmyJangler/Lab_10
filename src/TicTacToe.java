@@ -17,27 +17,53 @@ public class TicTacToe
         String player = "";
         int row = 0;
         int col = 0;
-        boolean gameWin = false;
-        //clear the board, move count to 0, and set player to x
+        boolean gameWinOrTie = false;
+        //Step 1: clear the board, move count to 0, and set player to x
         while (!gameDone){
             clearBoard();
             moveCount = 0;
             player = "X";
-
-            // show board, get coordinate for move (1-3 for row and col)
+            //Step 4: loop 2+3 until valid move
             do {
-                display();
-                System.out.println("Player " + player + ", enter your move (row [1-3] column [1-3]: ");
-                //loop till move is valid
-                row = SafeInput.getRangedInt(in, "Row: ", 1, 3) - 1;
-                col = SafeInput.getRangedInt(in, "Column: ", 1, 3) - 1;
-            }while (!gameWin);
+                //Step 2: show board, get coordinate for move (1-3 for row and col)
+                while (!isValidMove(row,col)){
+                    display();
+                    System.out.println("Player " + player + ", enter your move (row [1-3] column [1-3]: ");
+                    //Step 3: Convert player move to the array indices (by - 1)
+                    row = SafeInput.getRangedInt(in, "Row: ", 1, 3) - 1;
+                    col = SafeInput.getRangedInt(in, "Column: ", 1, 3) - 1;
+                    //Step 4: Loop 2+3 until valid move
 
-            //record the move on the board and increment the move counter
+                    //Step 5: record the move on the board and increment the counter
+                    if (isValidMove(row, col)) {
+                        board[row][col] = player;
+                        moveCount++;
 
-            //check for win (if possible)
-
-            //announce win or tie if applicable, prompt to play again
+                    }
+                    //Step 6: check for win
+                    if (moveCount >= 5) {
+                        isWin(player);
+                        //Step 7: Announce win or tie if applicable
+                        if (isWin(player) == true) {
+                            gameWinOrTie = true;
+                            System.out.println("Congrats! Player " + player + " has won the game!");
+                        } /*else if (isTie(player)){
+                            gameWinOrTie = true;
+                            System.out.println("Wow! Its a tie!");
+                        }*/ else {
+                            gameWinOrTie = false;
+                        }
+                    }
+                }
+                //Step 8: toggle player for next move
+                if (player.equals("X"))
+                {
+                    player = "O";
+                } else if (player.equals("O"))
+                {
+                    player = "X";
+                }
+            }while (!gameWinOrTie);
 
             //toggle player for next move
 
@@ -129,6 +155,7 @@ public class TicTacToe
     /*
     private static boolean isTie() {
         //check for a tie condition ie: all spaces filled or no possible 3 in a row wins
+        if (moveCount = 9
     }
 
      */
