@@ -167,11 +167,9 @@ public class SafeInput {
                 inputYN = pipe.nextLine();
                 if (inputYN.equalsIgnoreCase("Y"))
                 {
-                    retValue = true;
-                    done = true;
+                    return false;
                 } else if (inputYN.equalsIgnoreCase("N")) {
-                    retValue = false;
-                    done = true;
+                    return true;
                 } else {
                     trash = inputYN;
                     System.out.println("You must enter a valid input! [Y/N] Not: " + trash);

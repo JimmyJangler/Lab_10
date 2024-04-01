@@ -19,59 +19,51 @@ public class TicTacToe
         int col = 0;
         boolean gameWinOrTie = false;
         //Step 1: clear the board, move count to 0, and set player to x
-        while (!gameDone){
+        while (!gameDone) {
             clearBoard();
             moveCount = 0;
             player = "X";
+            gameWinOrTie = false;
             //Step 4: loop 2+3 until valid move
             do {
                 //Step 2: show board, get coordinate for move (1-3 for row and col)
-                while (!isValidMove(row,col)){
-                    display();
-                    System.out.println("Player " + player + ", enter your move (row [1-3] column [1-3]: ");
-                    //Step 3: Convert player move to the array indices (by - 1)
-                    row = SafeInput.getRangedInt(in, "Row: ", 1, 3) - 1;
-                    col = SafeInput.getRangedInt(in, "Column: ", 1, 3) - 1;
-                    //Step 4: Loop 2+3 until valid move
-
+                display();
+                System.out.println("Player " + player + ", make your move!");
+                //Step 3: Convert player move to the array indices (by - 1)
+                row = SafeInput.getRangedInt(in, "Row ", 1, 3) - 1;
+                col = SafeInput.getRangedInt(in, "Column ", 1, 3) - 1;
+                //Step 4: Loop 2+3 until valid move
+                if (isValidMove(row, col)) {
                     //Step 5: record the move on the board and increment the counter
-                    if (isValidMove(row, col)) {
-                        board[row][col] = player;
-                        moveCount++;
-
-                    }
-                    //Step 6: check for win
+                    board[row][col] = player;
+                    moveCount++;
+                    //Step 6: check for win if possible
                     if (moveCount >= 5) {
-                        isWin(player);
                         //Step 7: Announce win or tie if applicable
                         if (isWin(player) == true) {
                             gameWinOrTie = true;
                             System.out.println("Congrats! Player " + player + " has won the game!");
-                        } /*else if (isTie(player)){
+                            break;
+                        } else if (isTie() == true) {
                             gameWinOrTie = true;
-                            System.out.println("Wow! Its a tie!");
-                        }*/ else {
+                            display();
+                            break;
+                        } else {
                             gameWinOrTie = false;
                         }
                     }
+                    //Step 8: toggle player for next move
+                    if (player.equals("X")) {
+                        player = "O";
+                    } else if (player.equals("O")) {
+                        player = "X";
+                    }
+                } else {
+                    System.out.println("Illegal Move! Try again!");
                 }
-                //Step 8: toggle player for next move
-                if (player.equals("X"))
-                {
-                    player = "O";
-                } else if (player.equals("O"))
-                {
-                    player = "X";
-                }
-            }while (!gameWinOrTie);
-
-            //toggle player for next move
-
-
-
-
+            } while (!gameWinOrTie);
+            gameDone = SafeInput.getYNConfirm(in, "Would you like to play again? ");
         }
-        gameDone = SafeInput.getYNConfirm(in, "Would you like to play again?");
     }
 
     private static void clearBoard() {
@@ -152,12 +144,64 @@ public class TicTacToe
         return false;
     }
 
-    /*
-    private static boolean isTie() {
-        //check for a tie condition ie: all spaces filled or no possible 3 in a row wins
-        if (moveCount = 9
+    private static boolean isBoardFull()  {
+        for (int row = 0; row < ROW; row++) {
+            for (int col = 0; col < COL; col++) {
+                if (board[row][col].equals(" ")) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
-     */
+    private static boolean hasPossibleWin(String player) {
+        //check rows for possible wins
+        for (int row = 0; row < ROW; row++)
+        {
+            if (board[row][0].equals(player) && board[row][1].equals(player) && board[row][2].equals(" ")
+            || board[row][0].equals(player) && board[row][1].equals(" ") && board[row][2].equals(player)
+            || board[row][0].equals(" ") && board[row][1].equals(player) && board[row][2].equals(player))
+            {
+                return true;
+            }
+        }
+        //check columns for possible wins
+        for (int col = 0; col < COL; col++)
+        {
+            if (board[0][col].equals(player) && board[1][col].equals(player) && board[2][col].equals(" ")
+                || board[0][col].equals(player) && board[1][col].equals(" ") && board[2][col].equals(player)
+                || board[0][col].equals(" ") && board[1][col].equals(player) && board[2][col].equals(player))
+            {
+                return true;
+            }
+        }
+        //check diagonals for possible wins
+        if (board[0][0].equals(player) && board[1][1].equals(player) && board[2][2].equals(" ")
+        || board[0][0].equals(player) && board[1][1].equals(" ") && board[2][2].equals(player)
+        || board[0][0].equals(" ") && board[1][1].equals(player) && board[2][2].equals(player))
+        {
+            return true;
+        }
+        if (board[2][0].equals(player) && board[1][1].equals(player) && board[0][2].equals(" ")
+        || board[2][0].equals(player) && board[1][1].equals(" ") && board[0][2].equals(player)
+        || board[2][0].equals(" ") && board[1][1].equals(player) && board[0][2].equals(player))
+        {
+            return true;
+        }
+        return false;
+    }
 
+    private static boolean isTie() {
+        //check for a tie condition ie: all spaces filled or no possible 3 in a row wins
+        if (isBoardFull() && !isWin("X") && !isWin("O"))
+        {
+            System.out.println("The Board is full! It's a tie!");
+            return true;
+        } else if (!hasPossibleWin("X") && !hasPossibleWin("O")) {
+            System.out.println("There are no possible wins left on the board! It's a tie!");
+            return true;
+        }
+        return false;
+    }
 }
